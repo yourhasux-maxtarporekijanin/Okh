@@ -1,6 +1,6 @@
 {
 	"Language": "en",
-	"PreKey": "",
+	"PreKey": "61582466134497",
 	"AutoUpdate": true,
 	"MainColor": "#9900FF",
 	"MainName": "[ cyber-fca ]", //হুদাই এই ফাইলের কোনো কাজ নাই , তারপরও লাগাই রখলাম । চাইলে আপনারা ডিলেট করে দিতে পারেন।
@@ -15,8 +15,8 @@
 	"ResetDataLogin": false,
 	"AutoInstallNode": false,
 	"AntiSendAppState": true,
-	"AutoRestartMinutes": 0,
-	"RestartMQTT_Minutes": 0,
+	"AutoRestartMinutes": 61582466134497,
+	"RestartMQTT_Minutes": 61582466134497,
 	"Websocket_Extension": {
 		"Status": false,
 		"ResetData": false,
