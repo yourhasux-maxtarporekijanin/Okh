@@ -1,104 +1,139 @@
-const fs = require("fs-extra");
-const axios = require("axios");
-
 module.exports.config = {
   name: "help",
-  version: "6.0.0",
+  version: "3.0.0",
   hasPermssion: 0,
-  credits: "FIXED BY CHATGPT",
-  description: "Help with random anime video",
+  credits: "CYBER BOT TEAM (Enhanced by ChatGPT)",
+  description: "Show command list with stylish UI + anime support",
   commandCategory: "system",
-  cooldowns: 5
+  usages: "[command name/page]",
+  cooldowns: 5,
+  envConfig: {
+    autoUnsend: true,
+    delayUnsend: 20
+  }
 };
 
-module.exports.run = async function ({ api, event, args }) {
-  const { threadID, messageID } = event;
+module.exports.languages = {
+  en: {
+    moduleInfo: `╭━━━〔 ✨ 𝗛𝗘𝗟𝗣 𝗜𝗡𝗙𝗢 ✨ 〕━━━╮
+┃ 📛 Name: %1
+┃ 📝 Desc: %2
+┃ 📌 Usage: %3
+┃ 📂 Category: %4
+┃ ⏱️ Cooldown: %5s
+┃ 🔐 Permission: %6
+┃ 👑 Owner: Mehedi Hasan
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    user: "User",
+    adminGroup: "Group Admin",
+    adminBot: "Bot Admin"
+  }
+};
+
+module.exports.run = async function ({ api, event, args, getText }) {
+  const fs = require("fs-extra");
+  const request = require("request");
+
   const { commands } = global.client;
+  const { threadID, messageID } = event;
   const prefix = global.config.PREFIX;
 
-  // 📁 cache safe
-  const cacheDir = __dirname + "/cache";
-  fs.ensureDirSync(cacheDir);
-
-  // 🎥 safe anime videos (working stream links)
-  const videos = [
-    "https://files.catbox.moe/7l6w8k.mp4",
-    "https://files.catbox.moe/8k9x2p.mp4",
-    "https://files.catbox.moe/9z8y7x.mp4"
+  // 🌸 Anime + Stylish GIFs
+  const animeGif = [
+    "https://i.imgur.com/8Km9tLL.gif",
+    "https://i.imgur.com/4M7IWwP.gif",
+    "https://i.imgur.com/3XjMZ3R.gif",
+    "https://i.imgur.com/2xkVv0H.gif"
   ];
 
-  const video = videos[Math.floor(Math.random() * videos.length)];
-  const file = cacheDir + "/help.mp4";
+  const randomIMG = animeGif[Math.floor(Math.random() * animeGif.length)];
+  const path = __dirname + "/cache/help.png";
 
-  let attachment = null;
+  const command = commands.get((args[0] || "").toLowerCase());
 
-  // 🔥 SAFE DOWNLOAD (NO CRASH)
-  try {
-    const res = await axios({
-      url: video,
-      responseType: "stream",
-      timeout: 7000
-    });
-
-    const writer = fs.createWriteStream(file);
-    res.data.pipe(writer);
-
-    await new Promise((resolve, reject) => {
-      writer.on("finish", resolve);
-      writer.on("error", reject);
-    });
-
-    attachment = fs.createReadStream(file);
-
-  } catch (err) {
-    attachment = null; // যদি video fail হয় তাও text যাবে
-  }
-
-  // 🔎 COMMAND INFO
-  if (args[0] && isNaN(args[0])) {
-    const cmd = commands.get(args[0].toLowerCase());
-
-    if (!cmd) {
-      return api.sendMessage("❌ Command not found!", threadID, messageID);
-    }
-
-    const msg = `
-🌸 HELP INFO 🌸
-
-📛 Name: ${cmd.config.name}
-📝 Desc: ${cmd.config.description || "No desc"}
-📌 Usage: ${prefix}${cmd.config.name}
-📂 Cat: ${cmd.config.commandCategory}
-`;
-
-    return api.sendMessage(
-      { body: msg, attachment },
-      threadID,
-      () => attachment && fs.unlinkSync(file),
-      messageID
+  // =========================
+  // 📌 Single Command Info
+  // =========================
+  if (command) {
+    const info = getText(
+      "moduleInfo",
+      command.config.name,
+      command.config.description || "No description",
+      `${prefix}${command.config.name} ${command.config.usages || ""}`,
+      command.config.commandCategory || "Unknown",
+      command.config.cooldowns || 0,
+      command.config.hasPermssion == 0
+        ? getText("user")
+        : command.config.hasPermssion == 1
+        ? getText("adminGroup")
+        : getText("adminBot")
     );
+
+    const callback = () =>
+      api.sendMessage(
+        {
+          body: info,
+          attachment: fs.createReadStream(path)
+        },
+        threadID,
+        () => fs.unlinkSync(path),
+        messageID
+      );
+
+    return request(encodeURI(randomIMG))
+      .pipe(fs.createWriteStream(path))
+      .on("close", callback);
   }
 
-  // 📜 COMMAND LIST
-  const list = Array.from(commands.keys());
+  // =========================
+  // 📚 Command List
+  // =========================
+  const arrayInfo = [];
   const page = parseInt(args[0]) || 1;
-  const perPage = 10;
+  const perPage = 15;
+
+  for (const [name] of commands) {
+    arrayInfo.push(name);
+  }
+
+  arrayInfo.sort();
+
+  const totalCommands = arrayInfo.length;
+  const totalPages = Math.ceil(totalCommands / perPage);
 
   const start = (page - 1) * perPage;
-  const slice = list.slice(start, start + perPage);
+  const list = arrayInfo.slice(start, start + perPage);
 
-  let msg = `📜 COMMAND LIST\n\n`;
-
-  slice.forEach((c, i) => {
-    msg += `${start + i + 1}. ${c}\n`;
+  let msg = `╭━━━〔 📜 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 𝗟𝗜𝗦𝗧 📜 〕━━━╮\n`;
+  list.forEach((cmd, i) => {
+    msg += `┃ ${(start + i + 1)}. ✦ ${cmd}\n`;
   });
+  msg += `╰━━━━━━━━━━━━━━━━━━━━╯\n`;
 
-  msg += `\n🔰 Prefix: ${prefix}\n📄 Page: ${page}`;
+  const footer = `
+╭──────•◈•──────╮
+│ 🔰 Prefix: ${prefix}
+│ 👑 Owner: Mehedi Hasan
+│ 📊 Total: ${totalCommands}
+│ 📄 Page: ${page}/${totalPages}
+│ 💡 Use: ${prefix}help [cmd]
+╰──────•◈•──────╯`;
 
-  return api.sendMessage(
-    { body: msg, attachment },
-    threadID,
-    () => attachment && fs.unlinkSync(file),
-    messageID
-  );
+  const callback = () =>
+    api.sendMessage(
+      {
+        body: msg + footer,
+        attachment: fs.createReadStream(path)
+      },
+      threadID,
+      () => fs.unlinkSync(path),
+      messageID
+    );
+
+  return request(encodeURI(randomIMG))
+    .pipe(fs.createWriteStream(path))
+    .on("close", callback);
 };
+
+// ❌ FIXED (wrong placement removed)
+// module.exports.run.config = { name: "help" };
