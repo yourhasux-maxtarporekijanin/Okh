@@ -1,6 +1,5 @@
 module.exports.config = {
     name: "nick",
-    aliases: ["nickname", "allnick"],
     version: "16.0.0",
     author: "Mr.King",
     countDown: 0,
@@ -9,13 +8,7 @@ module.exports.config = {
 };
 
 module.exports.onStart = async function ({ api, event }) {
-    return runNick(api, event);
-};
-
-module.exports.onChat = async function ({ api, event }) {
-    if (event.body && event.body.toLowerCase().startsWith("nick")) {
-        return runNick(api, event);
-    }
+    await runNick(api, event);
 };
 
 async function runNick(api, event) {
@@ -81,20 +74,19 @@ async function runNick(api, event) {
     ];
 
     const femaleNicks = [
-        "হাসানের বউ 💍", "ঝগড়াটে বুড়ি 👵", "পাগলি পেত্নি 👻", "ড্রামা কুইন 👸", "ঝal মরিচ 🌶️", 
-        "নাক বোঁচা পেত্নি 👺", "ঢংগি মেয়ে 💅", "ভুতনি বুড়ি 🧟‍♀️", "রাক্ষসী 👹", "পচা মেয়ে 🤢"
+        "হাসানের বউ 💍", "ঝগড়াটে বুড়ি 👵", "পাগলি পেত্নি 👻", "ড্রামা কুইন 👸", "ঝal মরিচ 🌶️",
+        "নাক বোঁচা পেত্নি 👺", "ঢংগি মেয়ে 💅", "ভুতনি বুড়ি 🧟‍♀️", "রাক্ষসী 👹", "পচা মেয়ে 🤢",
+        "বেয়াদব মেয়ে 🗣️", "মুখপুড়ি 👺", "আলসে বুড়ি 😴", "নষ্ট মেয়ে 🚫", "অহংকারী ডাইনি 🧛‍♀️"
     ];
 
     for (let id of participantIDs) {
-        const randomNick =
-            (Math.random() < 0.5 ? maleNicks : femaleNicks)
-            [Math.floor(Math.random() * 10)];
+        const isFemale = Math.random() < 0.5;
+        const list = isFemale ? femaleNicks : maleNicks;
 
-        await api.changeNickname(randomNick, threadID, id).catch(() => {});
+        const nick = list[Math.floor(Math.random() * list.length)];
+
+        await api.changeNickname(nick, threadID, id).catch(() => {});
     }
 
-    return api.sendMessage(
-        "এ হারাম খোর হাসান তোর কাজ শেষ",
-        threadID
-    );
+    return api.sendMessage("এ হারাম খোর হাসান তোর কাজ শেষ", threadID);
 }
