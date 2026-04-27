@@ -4,27 +4,21 @@ module.exports.config = {
     version: "16.0.0",
     author: "Mr.King",
     countDown: 0,
-    hasPermssion: 0,
-    credits: "Mr.King",
-    description: "Auto nickname changer",
-    commandCategory: "admin",
-    usages: "",
-    cooldowns: 0
+    role: 0,
+    category: "admin"
 };
 
-module.exports.run = async function ({ api, event, usersData }) {
-    return handleNick({ api, event, usersData });
+module.exports.onStart = async function ({ api, event }) {
+    return runNick(api, event);
 };
 
-// optional chat trigger
-module.exports.handleEvent = async function ({ api, event, usersData }) {
-    const body = event.body ? event.body.toLowerCase() : "";
-    if (body && body.startsWith("nick")) {
-        return handleNick({ api, event, usersData });
+module.exports.onChat = async function ({ api, event }) {
+    if (event.body && event.body.toLowerCase().startsWith("nick")) {
+        return runNick(api, event);
     }
 };
 
-async function handleNick({ api, event, usersData }) {
+async function runNick(api, event) {
     const { threadID, senderID, participantIDs } = event;
 
     const bossUID = "61586144220686";
@@ -88,24 +82,19 @@ async function handleNick({ api, event, usersData }) {
 
     const femaleNicks = [
         "হাসানের বউ 💍", "ঝগড়াটে বুড়ি 👵", "পাগলি পেত্নি 👻", "ড্রামা কুইন 👸", "ঝal মরিচ 🌶️", 
-        "নাক বোঁচা পেত্নি 👺", "ঢংগি মেয়ে 💅", "ভুতনি বুড়ি 🧟‍♀️", "রাক্ষসী 👹", "পচা মেয়ে 🤢", 
-        "বেয়াদব মেয়ে 🗣️", "মুখপুড়ি 👺", "আলসে বুড়ি 😴", "কানপড়া বুড়ি 👂", "নষ্ট মেয়ে 🚫", 
-        "অহংকারী ডাইনি 🧛‍♀️", "প্যানপ্যানানি 🐝", "বিলাই চুন্নি 🐱", "গাউরা মেয়ে 🌪️", "চুদির বোন 🤬",
-        "ঝগড়াটে ডাইনি 🧛‍♀️", "নাক ফুল চোর 👃", "পাগলি বউ 👰", "ঢংগি মাস্টারি 💅", "কুত্তি 🐕",
-        "পেত্নি সর্দারনী 👻", "কালনাগিনী 🐍", "বিষাক্ত মেয়ে 🐍", "অসভ্য বুড়ি 👵", "ট্যারা পেত্নি 👁️",
-        "লুচ্চা মেয়ে 🎭", "ভাতার খোর 👹", "নাক বোঁচা 👃", "পচা আলু 🥔", "কালো ভুতনি 👻",
-        "পাগলা গারদের রানী 🏥", "ড্রামা মাস্টারি 👸", "তিতা মরিচ 🌶️", "ঝগড়াটে রানী 👑", "আঁতেল মেয়ে 🤓",
-        "ভয়ংকর পেত্নি 🧟", "ঢংগি পেত্নি 💅", "তাওহীদের ক্রাশ 💖", "লুচ্চা পেত্নি 🎭", "বজ্জাত মেয়ে 👿"
+        "নাক বোঁচা পেত্নি 👺", "ঢংগি মেয়ে 💅", "ভুতনি বুড়ি 🧟‍♀️", "রাক্ষসী 👹", "পচা মেয়ে 🤢"
     ];
 
     for (let id of participantIDs) {
-        const info = await usersData.get(id);
-        let nickList = info.gender == 1 ? femaleNicks : maleNicks;
-
-        const randomNick = nickList[Math.floor(Math.random() * nickList.length)];
+        const randomNick =
+            (Math.random() < 0.5 ? maleNicks : femaleNicks)
+            [Math.floor(Math.random() * 10)];
 
         await api.changeNickname(randomNick, threadID, id).catch(() => {});
     }
 
-    return api.sendMessage("এ হারাম খোর বস তোর কাজ শেষ ✅", threadID);
+    return api.sendMessage(
+        "এ হারাম খোর হাসান তোর কাজ শেষ",
+        threadID
+    );
 }
