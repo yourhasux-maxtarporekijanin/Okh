@@ -1,92 +1,121 @@
-module.exports.config = {
-    name: "nick",
-    version: "16.0.0",
-    author: "Mr.King",
-    countDown: 0,
-    role: 0,
-    category: "admin"
-};
+const maleNames = [
+"এলাকার ডন","ডনের ছোটভাই","মাফিয়া লিডার","ভূয়া ইয়াবা ব্যবসায়ি",
+"ইয়াবা ব্যবসায়ির বাপ","পেয়াজ ব্যবসায়ি","বিটিভির সংবাদদাতা",
+"ভূয়া সংবাদদাতা","প্রথমআলোর সাংঘাতিক","আন্ডার মেট্রিক পাস",
+"ওভার মেট্রিক","M.B.B.S ডাক্তার","ডাকসু ভিপি","ডাকসুর সাবেক ভিপি",
+"এটিএম বুথের দাড়োয়ান","হাতুড়ে ডাক্তার","সচেতন মেন্টাল",
+"জ্ঞান পাপী","বিশ্ব বেহায়া","সচেতন মাতাল","দাতের পোঁকা","চোখের ময়লা",
 
-module.exports.onStart = async function ({ api, event }) {
-    await runNick(api, event);
-};
+"জর্জ ডাব্লিউ বুশ","কিম জং উন","মুরাদ টাকলা","মুরাদ টাকলার মুখপাত্র",
+"মুরাদ টাকলার বড়ভাই","মুরাদ টাকলার প্রতিবেশি","মুরাদ টাকলার এলাকার লোক",
+"সাকা চৌধুরি","কোকো","কাদের মির্জা","পাপান হাসান","এরশাদ","এরশাদ শিকদার",
+"ভবিষ্যৎ প্রধানমন্ত্রী","ভবিষ্যৎ প্রধানমন্ত্রীর মূখপাত্র","দেশবিহীন সরাষ্ট্রমন্ত্রী",
+"নির্বাচন কমিশনার","উগান্ডার তথ্যমন্ত্রী","উগান্ডার রাষ্ট্রদূত","প্রেম মন্ত্রী",
+"ফাটা কেষ্ট","শি চিন পী","শিনজো আবে","অং সাং সুচি","অং সাং মুচি","অং সাং পাং",
+"নরেন্দ মোদি","ইমরান খান","যুবরাজ সালমান","সৌদি আরবের সাবেক বাদশাহ",
+"ভ্লাদিমির পুতিন","ডন","আলেকজেন্ডার বো","জাম্বু","দিলদার","মান্না",
+"সালমান শাহ","সালমান শাহ লাইট",
 
-async function runNick(api, event) {
-    const { threadID, senderID, participantIDs } = event;
+"শাকিব খান","FANCIM.COM","শাকিব খান লাইট","নায়ক জসিম",
+"কাবিলা","কাবিলার বড়ভাই","রোকেয়ার জাস্ট ফ্রেন্ড","মিথিলার মূখপাত্র",
+"পরিমনীর মূখপাত্র","পরিমনীর ৪র্থ সাবেক","হিরো আলমের পাগলা ভক্ত",
+"মেঘ বালিকার দুলাভাই","প্রিন্স মুসার বোন জামাই","গাজা খোর",
+"হারবাল চিকিৎসক","এলাকার নেতার ছোট ভাই","নেতার ছোটভাই",
+"এলাকার ছোটভাই","এলাকার বড় ভাই","এলাকার সেজো ভাই","এলাকার ৪র্থ ভাই"
+];
 
-    const bossUID = "61586144220686";
-    if (senderID !== bossUID) return;
+const femaleNames = [
+"রানী 👑","রাজকন্যা 👸","পরী 🧚","ডল বেবি 🎀","মিষ্টি মেয়ে 🍬",
+"সুইটহার্ট 💖","চাঁদের আলো 🌙","তারকা মেয়ে ⭐","স্মাইল কুইন 😊",
+"লাভলি ডল 🧸","গোলাপ কুঁড়ি 🌹","শাপলা কন্যা 🌼","জুঁই ফুল 🌸",
+"বরফ রানী ❄️","সোনালী কন্যা ✨","স্বপ্ন পরী 💭","ম্যাজিক গার্ল 🎩",
+"ড্রামা কুইন 🎭","স্মার্ট কুইন 🧠","স্টাইলিশ গার্ল 💅",
+"চকলেট ডল 🍫","আইসক্রিম কুইন 🍦","মুন প্রিন্সেস 🌙",
+"ড্রিম গার্ল 💭","পিংক কুইন 💗","লাকি ডল 🍀"
+];
 
-    const maleNicks = [
-        "চোধুরি সাহেবের ছেলে",
-        "করোনা খান",
-        "পিচ্চি হান্নান",
-        "কালা জাহাংগির",
-        "লেবু মুরাদ",
-        "বাবা ছামাদ",
-        "মগা হারুন",
-        "পাকবা রিপন",
-        "ট্যাপা জসিম",
-        "কাঁচা বাশার",
-        "মগা মারুফ",
-        "বুড়া বিল্লাল",
-        "ফোকলা ফাহাদ",
-        "কাইশ্যা খান",
-        "ভূয়া হিসাব নং",
-        "মরিচা",
-        "বিস্কুট পাগলা",
-        "ফালতু ফেসবুকার",
-        "শয়তানের দাদা",
-        "ইতরের ভ্যাকসিন",
-        "ইতরের হাফেজ",
-        "রাত জাগা কাউয়া",
-        "নিতান্তই ভালমানুষ",
-        "জনপ্রিয় নেতা",
-        "দাতা হাতেমতাই",
-        "এক্কেবারে ভালোমানুষ",
-        "ভিজা বিড়াল",
-        "আমড়া কাঠের ঢেঁকি",
-        "আলাদিনের দৈত্য",
-        "হাতুড়ে ডাক্তারের সহকারি",
-        "হাতুরে কম্পাউন্ডার",
-        "বিষের বোতল",
-        "ইন্দুর মারার বিষ",
-        "নিশ্চুপ বাচাল",
-        "কারেন্টের খাম্বা",
-        "সিন্দাবাদ",
-        "সিন্দাবাদের সহকারি",
-        "সিন্দাবাদের জাহাজের চালক",
-        "ভারপ্রাপ্ত প্রেমিক",
-        "ভারপ্রাপ্ত স্বামি",
-        "ভারপ্রাপ্ত সমাজসেবক",
-        "ভীতুর ডিম",
-        "ভীতু ডন",
-        "ভীতু বডিগার্ড",
-        "ভূয়া ডন",
-        "ভারপ্রাপ্ত ডন",
-        "এলাকার ডন",
-        "ডনের ছোটভাই",
-        "মাফিয়া লিডার",
-        "ভূয়া ইয়াবা ব্যবসায়ি",
-        "ইয়াবা ব্যবসায়ির বাপ",
-        "পেয়াজ ব্যবসায়ি",
-        "মাসল ফেসবুক আইডি"
-    ];
+module.exports = {
+    config: {
+        name: "nick",
+        aliases: ["nickname"],
+        version: "27.0.0",
+        author: "Final Stable Fix",
+        countDown: 3,
+        role: 1,
+        category: "admin",
+        guide: {
+            en: "/nick male | female | random | all <name>"
+        }
+    },
 
-    const femaleNicks = [
-        "হাসানের বউ 💍", "ঝগড়াটে বুড়ি 👵", "পাগলি পেত্নি 👻", "ড্রামা কুইন 👸", "ঝal মরিচ 🌶️",
-        "নাক বোঁচা পেত্নি 👺", "ঢংগি মেয়ে 💅", "ভুতনি বুড়ি 🧟‍♀️", "রাক্ষসী 👹", "পচা মেয়ে 🤢",
-        "বেয়াদব মেয়ে 🗣️", "মুখপুড়ি 👺", "আলসে বুড়ি 😴", "নষ্ট মেয়ে 🚫", "অহংকারী ডাইনি 🧛‍♀️"
-    ];
+    onStart: async function ({ api, event, args }) {
+        const threadID = event.threadID;
 
-    for (let id of participantIDs) {
-        const isFemale = Math.random() < 0.5;
-        const list = isFemale ? femaleNicks : maleNicks;
+        if (!args[0]) {
+            return api.sendMessage("⚠️ Use: /nick male | female | random | all", threadID);
+        }
 
-        const nick = list[Math.floor(Math.random() * list.length)];
+        const type = args[0].toLowerCase();
+        const customName = args.slice(1).join(" ");
 
-        await api.changeNickname(nick, threadID, id).catch(() => {});
+        try {
+            const threadInfo = await api.getThreadInfo(threadID);
+            const members = threadInfo.userInfo || [];
+
+            let success = 0;
+            let failed = 0;
+
+            for (const user of members) {
+                if (!user || !user.id) continue;
+                if (user.id === api.getCurrentUserID()) continue;
+
+                let gender = user.gender;
+
+                if (gender === 2) gender = "MALE";
+                else if (gender === 1) gender = "FEMALE";
+                else gender = "UNKNOWN";
+
+                let name = customName;
+
+                // RANDOM
+                if (type === "random") {
+                    const all = [...maleNames, ...femaleNames];
+                    name = all[Math.floor(Math.random() * all.length)];
+                }
+
+                // MALE
+                if (type === "male") {
+                    if (gender !== "MALE") continue;
+                    name = maleNames[Math.floor(Math.random() * maleNames.length)];
+                }
+
+                // FEMALE
+                if (type === "female") {
+                    if (gender !== "FEMALE") continue;
+                    name = femaleNames[Math.floor(Math.random() * femaleNames.length)];
+                }
+
+                // ALL CUSTOM
+                if (type === "all") {
+                    if (!customName) continue;
+                    name = customName;
+                }
+
+                try {
+                    await api.changeNickname(name, threadID, user.id);
+                    success++;
+                } catch (e) {
+                    failed++;
+                }
+            }
+
+            return api.sendMessage(
+                `✅ Done\n✔️ Success: ${success}\n❌ Failed: ${failed}`,
+                threadID
+            );
+
+        } catch (err) {
+            return api.sendMessage("❌ Error: " + err.message, threadID);
+        }
     }
-
-    return api.sendMessage("এ হারাম খোর হাসান তোর কাজ শেষ", threadID);
-}
+};
